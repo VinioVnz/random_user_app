@@ -4,11 +4,12 @@ import 'package:random_user/src/data/models/user_model.dart';
 
 import 'package:random_user/src/domain/user_repository.dart';
 
-class UserViewModel extends ChangeNotifier{
+class UserViewModel extends ChangeNotifier {
   final UserRepository repository;
 
   UserViewModel({required this.repository});
   List<UserModel> users = [];
+  List<UserModel> savedUsers = [];
   bool isLoading = false;
   String? error;
 
@@ -17,7 +18,7 @@ class UserViewModel extends ChangeNotifier{
 
   void startTicker(TickerProvider vsync) {
     _ticker = vsync.createTicker((elapsed) async {
-      if(elapsed - _elapsed >= const Duration(seconds: 5)){
+      if (elapsed - _elapsed >= const Duration(seconds: 5)) {
         _elapsed = elapsed;
         await getUser();
       }
@@ -26,19 +27,16 @@ class UserViewModel extends ChangeNotifier{
     _ticker!.start();
   }
 
-  Future<void> getUser() async{
+  Future<void> getUser() async {
     isLoading = true;
     notifyListeners();
-
-    users = await repository.getSavedUsers();
 
     try {
       final user = await repository.getRandomUser();
       users.add(user);
-      await repository.saveUser(user);
     } catch (e) {
       error = e.toString();
-    }finally{
+    } finally {
       isLoading = false;
       notifyListeners();
     }
@@ -48,5 +46,35 @@ class UserViewModel extends ChangeNotifier{
   void dispose() {
     _ticker?.dispose();
     super.dispose();
+  }
+
+  Future<void> loadSavedUsers() async {
+    savedUsers = await repository.getSavedUsers();
+    notifyListeners();
+  }
+
+  Future<void> saveUser(UserModel user) async {
+    try {
+      await repository.saveUser(user);
+      savedUsers.add(user);
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteSavedUser(UserModel user) async {
+    try {
+      await repository.deleteUser(user);
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      notifyListeners();
+    }
+  }
+
+   bool isUserSaved(UserModel user) {
+    return savedUsers.any((u) => u.login.uuid == user.login.uuid);
   }
 }

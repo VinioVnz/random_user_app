@@ -19,23 +19,24 @@ class UserLocalStorage {
 
   Future<void> saveUser(UserModel user) async {
     final prefs = await SharedPreferences.getInstance();
-    final users = await getUsers();
+    final savedUsers = await getUsers();
 
-    users.add(user);
-    print(users);
-    final jsonList = users.map((u) => u.toJson()).toList();
+    savedUsers.add(user);
+
+    final jsonList = savedUsers.map((u) => u.toJson()).toList();
+
     await prefs.setString(_key, jsonEncode(jsonList));
   }
 
    Future<void> deleteUser(String uuid) async {
     final prefs = await SharedPreferences.getInstance();
-    final users = await getUsers();
+    final savedUsers = await getUsers();
 
-    users.removeWhere((u) => u.login.uuid == uuid);
+    savedUsers.removeWhere((u) => u.login.uuid == uuid);
 
     prefs.setString(
       _key,
-      jsonEncode(users.map((u) => u.toJson()).toList()),
+      jsonEncode(savedUsers.map((u) => u.toJson()).toList()),
     );
   }
 }

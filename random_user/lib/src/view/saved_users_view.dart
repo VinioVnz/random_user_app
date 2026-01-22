@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:random_user/src/view/details_view.dart';
-import 'package:random_user/src/view/saved_users_view.dart';
 import 'package:random_user/src/viewModel/user_viewmodel.dart';
 import 'package:random_user/src/widgets/custom_appbar.dart';
 
-
-class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+class SavedUsersView extends StatefulWidget {
+  const SavedUsersView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  State<SavedUsersView> createState() => _SavedUsersViewState();
 }
 
-class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin{
+class _SavedUsersViewState extends State<SavedUsersView> {
   @override
   void initState() {
     super.initState();
 
-    Future.microtask(() {
-      final vm = context.read<UserViewModel>();
-      vm.getUser();
-      vm.startTicker(this);
+    Future.microtask((){
+      context.read<UserViewModel>().loadSavedUsers();
     });
   }
 
@@ -32,35 +27,22 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
 
     return Scaffold(
       appBar: CustomAppbar(
-        title: 'Home',
-        actions: [
-          IconButton(onPressed: () {
-          Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => SavedUsersView()),
-              ); 
-        }, icon: const Icon(FontAwesomeIcons.database))],
+        title: 'Salvos',
+        
       ),
       body: _buildBody(vm),
     );
   }
 
+  @override
   Widget _buildBody(UserViewModel vm) {
-    if (vm.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (vm.error != null) {
-      return Center(child: Text(vm.error!));
-    }
-
 
     return Padding(
       padding: const EdgeInsets.all(16),
       child: ListView.builder(
-        itemCount: vm.users.length,
+        itemCount: vm.savedUsers.length,
         itemBuilder: (context, index) {
-          final user = vm.users[index];
+          final user = vm.savedUsers[index];
           return ListTile(
             leading: CircleAvatar(
               backgroundImage: NetworkImage(user.picture.thumbnail),
@@ -71,11 +53,12 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => DetailsView(user: user)),
-              ); 
+              );
             },
           );
         },
       ),
     );
+    ;
   }
 }
