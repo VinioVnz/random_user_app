@@ -42,4 +42,6 @@ class LocationModel {
         'coordinates': coordinates.toJson(),
         'timezone': timezone.toJson(),
       };
+
+    String get fullLocation => '$city, $state, $country';
 }

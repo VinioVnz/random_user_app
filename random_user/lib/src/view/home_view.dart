@@ -35,9 +35,9 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
         title: 'Home',
         actions: [
           IconButton(onPressed: () {
-          Navigator.push(
+          Navigator.pushNamed(
                 context,
-                MaterialPageRoute(builder: (_) => SavedUsersView()),
+                '/saved_users',
               ); 
         }, icon: const Icon(FontAwesomeIcons.database))],
       ),
