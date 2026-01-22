@@ -6,8 +6,14 @@ class StreetModel {
 
   factory StreetModel.fromJson(Map<String,dynamic> json){
     return StreetModel(
-      name : json['name'],
-      number : int.tryParse(json['number']) ?? 0
+      name : json['name'] ?? '',
+      number : json['number']
     );
   }
+  String get adress => '$number $name';
+
+  Map<String, dynamic> toJson() => {
+    'name' : name,
+    'number' : number
+  };
 }

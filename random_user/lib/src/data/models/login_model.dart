@@ -11,9 +11,15 @@ class LoginModel {
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return LoginModel(
-      uuid: json['uuid'],
-      username: json['username'],
-      password: json['password']
+      uuid: json['uuid'] ?? '',
+      username: json['username'] ?? '',
+      password: json['password'] ?? ''
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'uuid' : uuid,
+    'username' : username,
+    'password' : password
+  };
 }

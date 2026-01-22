@@ -11,9 +11,15 @@ class PictureModel {
 
   factory PictureModel.fromJson(Map<String, dynamic> json) {
     return PictureModel(
-      large: json['large'],
-      medium: json['medium'],
-      thumbnail: json['thumbnail'],
+      large: json['large'] ?? '',
+      medium: json['medium'] ?? '',
+      thumbnail: json['thumbnail'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'large' : large,
+    'medium' : medium,
+    'thumbnail' : thumbnail
+  };
 }

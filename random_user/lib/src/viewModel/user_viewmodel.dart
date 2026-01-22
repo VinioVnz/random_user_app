@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:random_user/src/data/models/user_model.dart';
 
 import 'package:random_user/src/domain/user_repository.dart';
@@ -7,22 +8,45 @@ class UserViewModel extends ChangeNotifier{
   final UserRepository repository;
 
   UserViewModel({required this.repository});
-
-  UserModel? user;
+  List<UserModel> users = [];
   bool isLoading = false;
   String? error;
+
+  Ticker? _ticker;
+  Duration _elapsed = Duration.zero;
+
+  void startTicker(TickerProvider vsync) {
+    _ticker = vsync.createTicker((elapsed) async {
+      if(elapsed - _elapsed >= const Duration(seconds: 5)){
+        _elapsed = elapsed;
+        await getUser();
+      }
+    });
+
+    _ticker!.start();
+  }
 
   Future<void> getUser() async{
     isLoading = true;
     notifyListeners();
-    
+
+    users = await repository.getSavedUsers();
+
     try {
-      user = await repository.getRandomUser();
+      final user = await repository.getRandomUser();
+      users.add(user);
+      await repository.saveUser(user);
     } catch (e) {
       error = e.toString();
     }finally{
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _ticker?.dispose();
+    super.dispose();
   }
 }

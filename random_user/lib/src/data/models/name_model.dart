@@ -11,11 +11,17 @@ class NameModel {
 
   factory NameModel.fromJson(Map<String, dynamic> json) {
     return NameModel(
-      title: json['title'],
-      first: json['first'],
-      last: json['last'],
+      title: json['title'] ?? '',
+      first: json['first'] ?? '',
+      last: json['last'] ?? '',
     );
   }
 
-  String get fullName => '$title $first $last';
+  String get fullName => '$first $last';
+
+  Map<String, dynamic> toJson() => {
+    'title' : title,
+    'first' : first,
+    'last' : last
+  };
 }

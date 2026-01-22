@@ -13,4 +13,9 @@ class DobModel {
       age: json['age'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'date' : date.toIso8601String(),
+    'age' : age
+  };
 }
